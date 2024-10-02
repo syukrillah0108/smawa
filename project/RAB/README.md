@@ -10,5 +10,5 @@
 | 8  | PCB                      | -         | 20000        | 20000               |
 | 9  | Biaya Operasional        | -         | 500000       | 500000              |
 | 10 | Gaji Tim + Saku          | 5         | 500000       | 2500000             |
-| 11 | Kabel Stereo tipe Makita | 10 pcs    | -            | 80000               |
+| 11 | Kabel Stereo tipe Makita | 10 meter  | -            | 80000               |
 |    | Total                    |           |              | **3,315,000** |
