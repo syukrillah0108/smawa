@@ -1,0 +1,20 @@
+{
+    "vsmqtt.brokerProfiles": [
+        {
+            "name": "test1",
+            "host": "localhost",
+            "port": 1883,
+            "username": "user1",
+            "password": "1234567890",
+            "clientId": "vsmqtt_client_64ea"
+        },
+        {
+            "name": "test2",
+            "host": "localhost",
+            "port": 1883,
+            "username": "user1",
+            "password": "1234567890",
+            "clientId": "vsmqtt_client_75cb"
+        }
+    ]
+}

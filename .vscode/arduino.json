@@ -1,4 +1,6 @@
 {
-    "board": "arduino:avr:uno",
-    "sketch": "src/test/test.ino"
+    "board": "esp8266:esp8266:d1_mini_clone",
+    "sketch": "src/water_flow/water_flow.ino",
+    "configuration": "xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,FlashMode=dout,FlashFreq=40,eesz=4M2M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=921600",
+    "port": "/dev/ttyUSB0"
 }
