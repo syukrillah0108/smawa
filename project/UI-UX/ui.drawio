@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="9L7Wck0KFNMNRKOT99sG" name="Mobile">
-        <mxGraphModel dx="1504" dy="1833" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1504" dy="1577" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -96,6 +96,9 @@
                 </mxCell>
                 <mxCell id="an2XCiXpJ7-AcVYaTtdH-16" value="30" style="html=1;strokeWidth=1;shadow=0;dashed=0;shape=mxgraph.ios7ui.rrect;rSize=0;strokeColor=none;fillColor=#0080F0;fontColor=#ffffff;fontSize=8;sketch=0;fontStyle=1" parent="an2XCiXpJ7-AcVYaTtdH-14" vertex="1">
                     <mxGeometry x="55.00000000000001" width="55.00000000000001" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.action;fillColor=#5294CF;gradientColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="163" y="-1060" width="63" height="64.5" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
