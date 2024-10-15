@@ -1,0 +1,288 @@
+String webpageCode = R"***(
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>IoT Dashboard</title>
+      <style>
+        /* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  /* Styling untuk Desktop */
+  @media (min-width: 768px) {
+    .dashboard {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+  
+  .monitoring, .control {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+  }
+  
+  .gauge-container, .water-level, .water-usage {
+    margin: 20px 0;
+  }
+  
+  .tank {
+    width: 100px;
+    height: 200px;
+    border: 2px solid #000;
+    position: relative;
+    margin: 0 auto;
+  }
+  
+  .water {
+    position: absolute;
+    bottom: 0;
+    background-color: blue;
+    width: 100%;
+    height: 0%;
+  }
+  
+  .water-usage span {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .mode-control, .siram-control {
+    margin: 20px 0;
+  }
+  
+  .mode-control label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .siram-control input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #555;
+  }
+  
+  .siram-control button {
+    width: 48%;
+  }
+  
+  .siram-control {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Media Query untuk Mobile */
+  @media (max-width: 767px) {
+    .gauge-container, .water-level, .water-usage {
+      text-align: center;
+    }
+  
+    .gauge-container canvas {
+      width: 80%;
+      height: auto;
+    }
+  
+    .tank {
+      width: 120px;
+      height: 240px;
+    }
+  
+    button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .siram-control {
+      flex-direction: column;
+    }
+  
+    .siram-control button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  
+      </style>
+    </head>
+    <body>
+    
+      <div class="dashboard">
+        <!-- Monitoring Section -->
+        <div class="monitoring">
+          <h2>Monitoring</h2>
+    
+          <!-- Gauge Speed Display -->
+          <div class="gauge-container">
+            <h3>Kecepatan Air</h3>
+            <canvas id="speedGauge"></canvas>
+          </div>
+    
+          <!-- Water Level Display -->
+          <div class="water-level">
+            <h3>Kondisi Tabung Air</h3>
+            <div class="tank">
+              <div id="water" class="water"></div>
+            </div>
+          </div>
+    
+          <!-- Water Usage Display -->
+          <div class="water-usage">
+            <h3>Jumlah Air Keluar</h3>
+            <span id="waterUsage">0</span> liter
+          </div>
+        </div>
+    
+        <!-- Control Section -->
+        <div class="control">
+          <h2>Kontrol</h2>
+    
+          <!-- Mode Control -->
+          <div class="mode-control">
+            <h3>Mode</h3>
+            <label><input type="radio" name="mode" value="on"> ON</label>
+            <label><input type="radio" name="mode" value="auto"> AUTO</label>
+            <label><input type="radio" name="mode" value="off"> OFF</label>
+          </div>
+    
+          <!-- Siram Control -->
+          <div class="siram-control">
+            <h3>Siram Manual</h3>
+            <input type="number" id="literInput" placeholder="Masukkan Liter">
+            <button id="siramBtn">Siram</button>
+            <button id="cancelBtn">Batal</button>
+          </div>
+        </div>
+      </div>
+    
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const waterElement = document.getElementById("water");
+    const waterUsageElement = document.getElementById("waterUsage");
+  
+    const literInput = document.getElementById("literInput");
+    const siramBtn = document.getElementById("siramBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+  
+    // Gauge untuk kecepatan air
+    const canvas = document.getElementById("speedGauge");
+    const ctx = canvas.getContext("2d");
+  
+    canvas.width = 200;
+    canvas.height = 200;
+  
+    // Menggambar gauge dengan warna sesuai kecepatan
+    function drawGauge(speed) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      let color;
+      if (speed <= 50) {
+        color = "green";
+      } else if (speed <= 100) {
+        color = "yellow";
+      } else {
+        color = "red";
+      }
+  
+      ctx.beginPath();
+      ctx.arc(100, 100, 80, Math.PI, 2 * Math.PI);
+      ctx.lineWidth = 15;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+  
+      ctx.fillStyle = "#000";
+      ctx.font = "24px Arial";
+      ctx.fillText(speed + " L/min", 60, 120);
+    }
+  
+    // Mengambil data dari server
+    function getData() {
+      fetch("/getdata")
+        .then(response => response.json())
+        .then(data => {
+          // Kecepatan air
+          const speed = data.speed;
+          drawGauge(speed);
+  
+          // Presentasi air
+          const waterPercentage = data.waterPercentage;
+          waterElement.style.height = waterPercentage + "%";
+  
+          // Jumlah air yang keluar
+          waterUsageElement.textContent = data.totalLiters;
+        })
+        .catch(error => console.log("Error:", error));
+    }
+  
+    // SetInterval untuk mengambil data setiap 1 detik
+    setInterval(getData, 500);
+  
+    // Mengirim mode kontrol ke server
+    document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+      radio.addEventListener('change', function() {
+        const mode = this.value;
+        fetch("/mode", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode: mode })
+        });
+      });
+    });
+  
+    // Tombol siram dan batal
+    siramBtn.addEventListener('click', function() {
+      const liter = literInput.value;
+      if (liter) {
+        fetch("/siram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ liters: liter })
+        }).then(() => {
+          literInput.value = ""; // Kosongkan input setelah submit
+        });
+      }
+    });
+  
+    cancelBtn.addEventListener('click', function() {
+      literInput.value = ""; // Kosongkan input jika batal
+    });
+  });
+  
+      </script>
+    </body>
+    </html>
+    
+)***";

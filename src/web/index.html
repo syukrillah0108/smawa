@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="dashboard">
+    <!-- Monitoring Section -->
+    <div class="monitoring">
+      <h2>Monitoring</h2>
+
+      <!-- Gauge Speed Display -->
+      <div class="gauge-container">
+        <h3>Kecepatan Air</h3>
+        <canvas id="speedGauge"></canvas>
+      </div>
+
+      <!-- Water Level Display -->
+      <div class="water-level">
+        <h3>Kondisi Tabung Air</h3>
+        <div class="tank">
+          <div id="water" class="water"></div>
+        </div>
+      </div>
+
+      <!-- Water Usage Display -->
+      <div class="water-usage">
+        <h3>Jumlah Air Keluar</h3>
+        <span id="waterUsage">0</span> liter
+      </div>
+    </div>
+
+    <!-- Control Section -->
+    <div class="control">
+      <h2>Kontrol</h2>
+
+      <!-- Mode Control -->
+      <div class="mode-control">
+        <h3>Mode</h3>
+        <label><input type="radio" name="mode" value="on"> ON</label>
+        <label><input type="radio" name="mode" value="auto"> AUTO</label>
+        <label><input type="radio" name="mode" value="off"> OFF</label>
+      </div>
+
+      <!-- Siram Control -->
+      <div class="siram-control">
+        <h3>Siram Manual</h3>
+        <input type="number" id="literInput" placeholder="Masukkan Liter">
+        <button id="siramBtn">Siram</button>
+        <button id="cancelBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
