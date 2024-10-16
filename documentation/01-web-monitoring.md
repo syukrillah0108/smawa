@@ -5,6 +5,8 @@
 ![Level 1](img/1m.png)
 
 # Live Test
-<video>
-    <source src="img/test1.mp4">
-</video>
+<html>
+<body>
+    <video src="img/test1.mp4"></video>
+</body>
+</html>
