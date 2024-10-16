@@ -8,5 +8,6 @@
 <html>
 <body>
     <video src="img/test1.mp4"></video>
+    <frame src="img/test1.mp4"></frame>
 </body>
 </html>
