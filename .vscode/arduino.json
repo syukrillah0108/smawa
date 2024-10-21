@@ -1,6 +1,6 @@
 {
-    "board": "esp32:esp32:esp32doit-devkit-v1",
-    "sketch": "src/main/main.ino",
-    "configuration": "FlashFreq=80,UploadSpeed=921600,DebugLevel=none,EraseFlash=none",
-    "port": "/dev/ttyUSB0"
+    "board": "esp32:esp32:nologo_esp32c3_super_mini",
+    "sketch": "src/test/test.ino",
+    "configuration": "USBMode=hwcdc,JTAGAdapter=default,CDCOnBoot=default,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,UploadSpeed=921600,DebugLevel=none,EraseFlash=none",
+    "port": "/dev/ttyACM0"
 }

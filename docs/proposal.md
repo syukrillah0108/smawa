@@ -105,7 +105,14 @@ Sistem ini dirancang dengan pendekatan berikut:
 
 #### 3.2 Perancangan
 
----
+##### **3.2.1 Hardware**
+
+##### 3.2.2 Frimware
+
+##### 3.2.3 Software
+
+###### 3.2.1 UI/UX
+
 
 ### **BAB IV: HASIL DAN PEMBAHASAN**
 
