@@ -97,5 +97,54 @@
    pip3.13 install pyA20
    ```
 5. Test Python
+   ```python
+   from time import sleep
+   from pyA20.gpio import gpio
+   from pyA20.gpio import port
+
+   gpio.init()
+
+   gpio.setcfg(port.PB13, gpio.OUTPUT)
+
+   try:
+      while True:
+         gpio.output(port.PB13, gpio.HIGH)
+         sleep(1)
+
+         gpio.output(port.PB13, gpio.LOW)
+         sleep(1)
+
+   except KeyboardInterrupt:
+      gpio.output(port.PB13, gpio.LOW)
+   ```
+   Jalankan program di Boot
+   - Buat file service
+      ```bash
+      sudo nano /etc/systemd/system/blink.service
+      ```
+   - Konfigurasi
+      ```bash
+      [Unit]
+      Description=Run Blink Script
+
+      [Service]
+      ExecStart=/usr/bin/python3.13 /program/blink.py
+      WorkingDirectory=/program
+      StandardOutput=inherit
+      StandardError=inherit
+      Restart=always
+      User=root
+
+      [Install]
+      WantedBy=multi-user.target
+      ```
+   - Aktifkan Service
+      ```bash
+      sudo systemctl enable blink.service
+      ```
+   - Test
+      ```bash
+      sudo systemctl start blink.service
+      ```
 
 # Acess Point
