@@ -10,11 +10,11 @@
         },
         {
             "name": "test2",
-            "host": "localhost",
+            "host": "192.168.96.195",
             "port": 1883,
             "username": "user1",
             "password": "1234567890",
-            "clientId": "vsmqtt_client_75cb"
+            "clientId": "vsmqtt_client"
         }
     ]
 }
