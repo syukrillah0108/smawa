@@ -7,72 +7,69 @@
 #include <string.h>
 
 #define ADDRESS     "tcp://localhost:1883"
-#define CLIENTID    "WaterFlowClient"
+#define CLIENTID    "BananaPiClient"
 #define USERNAME    "user1"
 #define PASSWORD    "1234567890"
-#define TOPIC_PUBLISH "/air/kecepatan"
-#define TOPIC_SUBSCRIBE "/set/siram"
+#define TOPIC1      "/air/utama"
+#define TOPIC2      "/air/nutrisi"
 #define QOS         2
 #define TIMEOUT     10000L
 
-#define FLOW_SENSOR_PIN  7 // Gunakan pin wiringBP
-#define RELAY_PIN        2 // Gunakan pin wiringBP
+// Sensor 1
+#define TRIG_PIN_1  27
+#define ECHO_PIN_1  28
 
-// Konstanta sensor YF-S201
-#define CALIBRATION_FACTOR 7.5 // faktor kalibrasi untuk YF-S201
+// Sensor 2
+#define TRIG_PIN_2  25
+#define ECHO_PIN_2  24
 
-volatile int pulseCount = 0;
-float flowRate = 0;
-float totalLiters = 0;
-float targetLiters = 0;
-int wateringActive = 0; // Status aktif/tidaknya penyiraman
+#define TANGKI_TINGGI_CM 100.0
+#define ECHO_TIMEOUT 30000 // timeout 30ms
 
-MQTTClient client;
+float persentase1, persentase2;
 
-void pulseCounter() {
-    pulseCount++;
+double measureDistance(int trigPin, int echoPin) {
+    long startTime, travelTime;
+
+    // Kirim sinyal trigger
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+
+    // Tunggu sinyal ECHO HIGH dengan timeout
+    long timeoutStart = micros();
+    while (digitalRead(echoPin) == LOW) {
+        if (micros() - timeoutStart > ECHO_TIMEOUT) {
+            return -1; // timeout, tidak ada respons dari sensor
+        }
+    }
+
+    startTime = micros();
+    while (digitalRead(echoPin) == HIGH) {
+        if (micros() - startTime > ECHO_TIMEOUT) {
+            return -1; // timeout, ECHO terlalu lama
+        }
+    }
+
+    travelTime = micros() - startTime;
+
+    // Hitung jarak dalam cm
+    double distance = (travelTime * 0.0343) / 2;
+    return distance;
 }
 
-void calculateFlowRate() {
-    flowRate = (pulseCount / CALIBRATION_FACTOR); // Kecepatan air dalam L/min
-    pulseCount = 0; // Reset hitungan pulse
-    totalLiters += (flowRate / 60); // Tambah total liter dengan liter per detik
-}
-
-void publishFlowRate() {
-    char payload[50];
-    snprintf(payload, sizeof(payload), "%.2f", flowRate);
-
+void publishToMQTT(MQTTClient client, const char* topic, const char* payload) {
     MQTTClient_message pubmsg = MQTTClient_message_initializer;
-    pubmsg.payload = payload;
+    MQTTClient_deliveryToken token;
+
+    pubmsg.payload = (void*)payload;
     pubmsg.payloadlen = strlen(payload);
     pubmsg.qos = QOS;
     pubmsg.retained = 0;
-    MQTTClient_deliveryToken token;
-
-    MQTTClient_publishMessage(client, TOPIC_PUBLISH, &pubmsg, &token);
+    MQTTClient_publishMessage(client, topic, &pubmsg, &token);
     MQTTClient_waitForCompletion(client, token, TIMEOUT);
-}
-
-void messageArrivedHandler(char* payload) {
-    targetLiters = atof(payload);
-    printf("Target volume penyiraman diterima: %.2f liter\n", targetLiters);
-    totalLiters = 0; // Reset volume total saat target baru diterima
-    wateringActive = 1; // Aktifkan penyiraman
-}
-
-int messageArrived(void* context, char* topicName, int topicLen, MQTTClient_message* message) {
-    char payload[message->payloadlen + 1];
-    memcpy(payload, message->payload, message->payloadlen);
-    payload[message->payloadlen] = '\0';
-
-    if (strcmp(topicName, TOPIC_SUBSCRIBE) == 0) {
-        messageArrivedHandler(payload);
-    }
-
-    MQTTClient_freeMessage(&message);
-    MQTTClient_free(topicName);
-    return 1;
 }
 
 int main(void) {
@@ -81,14 +78,14 @@ int main(void) {
         return 1;
     }
 
-    pinMode(FLOW_SENSOR_PIN, INPUT);
-    pinMode(RELAY_PIN, OUTPUT);
-    digitalWrite(RELAY_PIN, LOW);
+    pinMode(TRIG_PIN_1, OUTPUT);
+    pinMode(ECHO_PIN_1, INPUT);
+    pinMode(TRIG_PIN_2, OUTPUT);
+    pinMode(ECHO_PIN_2, INPUT);
 
-    // Set up interrupt untuk counter pulse
-    wiringPiISR(FLOW_SENSOR_PIN, INT_EDGE_FALLING, &pulseCounter);
-
+    MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+
     MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
@@ -98,27 +95,52 @@ int main(void) {
     if (MQTTClient_connect(client, &conn_opts) != MQTTCLIENT_SUCCESS) {
         printf("Gagal terhubung ke broker MQTT\n");
         return 1;
+    } else {
+        printf("Berhasil terhubung ke MQTT\n");
     }
-    printf("Berhasil terhubung ke MQTT\n");
-
-    MQTTClient_subscribe(client, TOPIC_SUBSCRIBE, QOS);
 
     while (1) {
-        delay(1000); // Perhitungan tiap 1 detik
+        // Sensor 1
+        double rawDistance1 = measureDistance(TRIG_PIN_1, ECHO_PIN_1);
+        char payload1[50];
 
-        calculateFlowRate();
-        publishFlowRate();
-        printf("Kecepatan Aliran: %.2f L/min, Total: %.2f L\n", flowRate, totalLiters);
-
-        if (wateringActive) {
-            if (totalLiters >= targetLiters) {
-                digitalWrite(RELAY_PIN, LOW); // Matikan penyiraman
-                printf("Target penyiraman tercapai: %.2f liter\n", totalLiters);
-                wateringActive = 0;
+        if (rawDistance1 == -1) {
+            snprintf(payload1, sizeof(payload1), "err");
+            printf("Sensor 1 Error: Tidak ada respons dari sensor\n");
+        } else {
+            persentase1 = (TANGKI_TINGGI_CM - rawDistance1) / TANGKI_TINGGI_CM * 100;
+            if (persentase1 <= 0) {
+                snprintf(payload1, sizeof(payload1), "err");
             } else {
-                digitalWrite(RELAY_PIN, HIGH); // Aktifkan penyiraman
+                snprintf(payload1, sizeof(payload1), "%.2f", persentase1);
             }
         }
+
+        // Kirim data Sensor 1 ke MQTT
+        publishToMQTT(client, TOPIC1, payload1);
+        printf("Data Sensor 1 dikirim ke MQTT: %s\n", payload1);
+
+        // Sensor 2
+        double rawDistance2 = measureDistance(TRIG_PIN_2, ECHO_PIN_2);
+        char payload2[50];
+
+        if (rawDistance2 == -1) {
+            snprintf(payload2, sizeof(payload2), "err");
+            printf("Sensor 2 Error: Tidak ada respons dari sensor\n");
+        } else {
+            persentase2 = (TANGKI_TINGGI_CM - rawDistance2) / TANGKI_TINGGI_CM * 100;
+            if (persentase2 <= 0) {
+                snprintf(payload2, sizeof(payload2), "err");
+            } else {
+                snprintf(payload2, sizeof(payload2), "%.2f", persentase2);
+            }
+        }
+
+        // Kirim data Sensor 2 ke MQTT
+        publishToMQTT(client, TOPIC2, payload2);
+        printf("Data Sensor 2 dikirim ke MQTT: %s\n", payload2);
+
+        delay(500); // jeda 500 ms sebelum pembacaan berikutnya
     }
 
     MQTTClient_disconnect(client, 10000);
