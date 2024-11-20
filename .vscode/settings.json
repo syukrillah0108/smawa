@@ -10,11 +10,14 @@
         },
         {
             "name": "test2",
-            "host": "192.168.96.195",
+            "host": "192.168.12.1",
             "port": 1883,
             "username": "user1",
             "password": "1234567890",
             "clientId": "vsmqtt_client"
         }
-    ]
+    ],
+    "files.associations": {
+        "unistd.h": "c"
+    }
 }

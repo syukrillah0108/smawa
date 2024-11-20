@@ -3,7 +3,7 @@
 
 #define WIFI_SSID       "SmartWatering"
 
-#define MQTT_SERVER     "192.168.12.1" // Sesuaikan dengan alamat broker MQTT Anda
+#define MQTT_SERVER     "192.168.1.100"
 #define MQTT_PORT       1883
 #define MQTT_USER       "user1"
 #define MQTT_PASSWORD   "1234567890"
@@ -13,8 +13,8 @@
 #define TOPIC_PUBLISH_TARGET "/air/target"
 #define TOPIC_SUBSCRIBE "/set/siram"
 
-#define FLOW_SENSOR_PIN D1 // Pin sensor water flow
-#define RELAY_PIN       D2 // Pin relay untuk penyiraman
+#define FLOW_SENSOR_PIN D1
+#define RELAY_PIN       D2
 #define CALIBRATION_FACTOR 7.5 // Faktor kalibrasi YF-S201
 
 volatile int pulseCount = 0;
@@ -26,19 +26,16 @@ int wateringActive = 0;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// Fungsi interrupt untuk menghitung pulse dari sensor water flow
 void pulseCounter() {
     pulseCount++;
 }
 
-// Fungsi untuk menghitung kecepatan aliran air
 void calculateFlowRate() {
-    flowRate = (pulseCount / CALIBRATION_FACTOR); // L/min
+    flowRate = (pulseCount / CALIBRATION_FACTOR); 
     pulseCount = 0;
-    totalLiters += (flowRate / 60); // Tambah liter per detik
+    totalLiters += (flowRate / 60); 
 }
 
-// Fungsi untuk publish data ke MQTT
 void publishData(const char* topic, float value) {
     char payload[50];
     snprintf(payload, sizeof(payload), "%.2f", value);
@@ -51,7 +48,6 @@ void publishAllData() {
     publishData(TOPIC_PUBLISH_TARGET, targetLiters);
 }
 
-// Fungsi untuk menangani pesan yang diterima
 void callback(char* topic, byte* payload, unsigned int length) {
     char msg[length + 1];
     memcpy(msg, payload, length);
@@ -72,13 +68,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
 }
 
-// Fungsi untuk koneksi ke WiFi tanpa password
 void setupWiFi() {
     delay(10);
     Serial.println();
     Serial.print("Menghubungkan ke ");
     Serial.println(WIFI_SSID);
-    WiFi.begin(WIFI_SSID); // Tanpa password
+    WiFi.begin(WIFI_SSID); 
 
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -87,7 +82,6 @@ void setupWiFi() {
     Serial.println("\nWiFi terhubung");
 }
 
-// Fungsi untuk koneksi ke MQTT broker
 void setupMQTT() {
     client.setServer(MQTT_SERVER, MQTT_PORT);
     client.setCallback(callback);
@@ -101,7 +95,7 @@ void setupMQTT() {
             Serial.print("Gagal, rc=");
             Serial.print(client.state());
             Serial.println(" mencoba lagi dalam 5 detik");
-            delay(1000);
+            delay(5000);
         }
     }
 }
@@ -113,7 +107,6 @@ void setup() {
 
     pinMode(FLOW_SENSOR_PIN, INPUT);
     pinMode(RELAY_PIN, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(RELAY_PIN, LOW);
 
     attachInterrupt(digitalPinToInterrupt(FLOW_SENSOR_PIN), pulseCounter, FALLING);
@@ -123,8 +116,6 @@ void loop() {
     if (!client.connected()) {
         setupMQTT();
     }
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(500);
     client.loop();
 
     calculateFlowRate();
@@ -140,6 +131,5 @@ void loop() {
             wateringActive = 0;
         }
     }
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(500); // Delay 1 detik
+    delay(1000);
 }
