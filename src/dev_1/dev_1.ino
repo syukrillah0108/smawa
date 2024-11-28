@@ -5,7 +5,7 @@
 const char* ssid = "SmartWatering";
 
 // Konfigurasi MQTT
-const char* mqtt_server = "192.168.12.1";
+const char* mqtt_server = "192.168.25.2";
 const char* mqtt_user = "user1";
 const char* mqtt_password = "1234567890";
 const char* tank_utama = "/air/utama";
@@ -23,6 +23,7 @@ const int trigPin2 = D7;
 const int echoPin2 = D8;
 const int relay1Pin = D1;
 const int relay2Pin = D2;
+#define LED_BUILTIN D3
 
 #define MAX_HEIGHT_NUTRISI 70.0  // Ketinggian maksimum tanki air nutrisi (cm)
 #define MAX_HEIGHT_UTAMA 80.0  // Ketinggian maksimum tanki air utama (cm)
@@ -31,7 +32,7 @@ const int relay2Pin = D2;
 void setup_wifi() {
     delay(10);
     Serial.println("Menghubungkan ke WiFi...");
-    WiFi.begin(ssid);
+    WiFi.begin(ssid, "Smawa@PWD");
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
@@ -118,7 +119,7 @@ void loop() {
         digitalWrite(relay2Pin, LOW);
         reconnect();
     }
-    delay(100);
+    delay(400);
     digitalWrite(LED_BUILTIN, LOW);
     client.loop();
 
@@ -153,6 +154,6 @@ void loop() {
     Serial.print(percentage2);
     Serial.println("%");
 
-    delay(100);
+    delay(400);
     digitalWrite(LED_BUILTIN, HIGH);
 }

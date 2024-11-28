@@ -111,9 +111,11 @@ void sendToMQTT(int cpuUsage, int ramUsage, int diskUsage, int cpuTemp) {
     }
 
     char payload[100];
-    snprintf(payload, sizeof(payload), 
-             "{\"cpu\": %d, \"ram\": %d, \"disk\": %d, \"temp\": %d}", 
-             cpuUsage, ramUsage, diskUsage, cpuTemp);
+    snprintf(
+        payload, sizeof(payload), 
+        "{\"cpu\": %d, \"ram\": %d, \"disk\": %d, \"temp\": %d}", 
+        cpuUsage, ramUsage, diskUsage, cpuTemp
+    );
 
     pubmsg.payload = payload;
     pubmsg.payloadlen = strlen(payload);

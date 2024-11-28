@@ -19,7 +19,7 @@
             "includePath": [
                 "/home/syukrillah/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/include",
                 "/home/syukrillah/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/lwip2/include",
-                "/tmp/arduino/sketches/E85A3CCAA99C7FA2EAA8430279BF8E47/core",
+                "/tmp/arduino/sketches/4B708A3021A464059A753B5306EB0A56/core",
                 "/home/syukrillah/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
                 "/home/syukrillah/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/variants/d1_mini",
                 "/home/syukrillah/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi/src",
