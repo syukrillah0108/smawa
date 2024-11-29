@@ -70,8 +70,8 @@
    Tambahakan baris berikut
 
    ```bash
-    allow_anonymous false
-    password_file /etc/mosquitto/passwd
+   allow_anonymous false
+   password_file /etc/mosquitto/passwd
    ```
 4. Restart mosquitto
 
@@ -174,8 +174,11 @@
      ```
 
 # Acess Point
+
 ## Installation
+
 ### Generic
+
 ```bash
 git clone https://github.com/oblique/create_ap
 cd create_ap
@@ -183,36 +186,48 @@ make install
 ```
 
 ## Examples
+
 ### No passphrase (open network):
+
 ```bash
 create_ap wlan0 eth0 MyAccessPoint
 ```
 
 ### WPA + WPA2 passphrase:
+
 ```bash
 create_ap wlan0 eth0 MyAccessPoint MyPassPhrase
 ```
+
 ### AP without Internet sharing:
+
 ```bash
 create_ap -n wlan0 MyAccessPoint MyPassPhrase
 ```
+
 ### Bridged Internet sharing:
+
 ```bash
 create_ap -m bridge wlan0 eth0 MyAccessPoint MyPassPhrase
 ```
+
 ### Bridged Internet sharing (pre-configured bridge interface):
+
 ```bash
 create_ap -m bridge wlan0 br0 MyAccessPoint MyPassPhrase
 ```
+
 ### Internet sharing from the same WiFi interface:
+
 ```bash
 create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase
 ```
+
 ### Start on boot:
+
 ```bash
 systemctl enable create_ap
 ```
-
 
 # Program Blik WiringPi
 
@@ -249,12 +264,14 @@ int main (void) {
     return 0 ;
 }
 ```
+
 ### Edit Konfiguras
-     ```shell
+
+    ```shell
      [Unit]
      Description=Run Blink Script
 
-     [Service]
+    [Service]
      ExecStart=/program/hasil_compile.out
      WorkingDirectory=/program
      StandardOutput=inherit
@@ -262,19 +279,21 @@ int main (void) {
      Restart=always
      User=root
 
-     [Install]
+    [Install]
      WantedBy=multi-user.target
      ```
-   - Aktifkan Service
-     ```bash
-     sudo systemctl enable blink.service
-     ```
-   - Test
-     ```bash
-     sudo systemctl start blink.service
-     ```
+
+- Aktifkan Service
+  ```bash
+  sudo systemctl enable blink.service
+  ```
+- Test
+  ```bash
+  sudo systemctl start blink.service
+  ```
 
 # GPIO
+
  +-----+-----+---------+------+---+---Pi ---+---+------+---------+-----+-----+
  | CPU | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | CPU |
  +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+

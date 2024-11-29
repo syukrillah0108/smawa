@@ -38,7 +38,7 @@ void setup_wifi() {
         Serial.print(".");
     }
         Serial.println("\nWiFi terhubung");
-    }
+}
 
 // Fungsi untuk membaca jarak dari sensor ultrasonik
 float readDistance(int trigPin, int echoPin) {
@@ -79,16 +79,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
     while (!client.connected()) {
     Serial.println("Menghubungkan ke MQTT...");
-    if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
-        Serial.println("MQTT terhubung");
-        client.subscribe(relay1_topic);
-        client.subscribe(relay2_topic);
-    } else {
-        Serial.print("Gagal, rc=");
-        Serial.print(client.state());
-        Serial.println(" mencoba lagi dalam 5 detik");
-        delay(5000);
-    }
+        if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
+            Serial.println("MQTT terhubung");
+            client.subscribe(relay1_topic);
+            client.subscribe(relay2_topic);
+        } else {
+            Serial.print("Gagal, rc=");
+            Serial.print(client.state());
+            Serial.println(" mencoba lagi dalam 5 detik");
+            delay(5000);
+        }
     }
 }
 
@@ -119,6 +119,7 @@ void loop() {
         digitalWrite(relay2Pin, LOW);
         reconnect();
     }
+
     delay(400);
     digitalWrite(LED_BUILTIN, LOW);
     client.loop();
