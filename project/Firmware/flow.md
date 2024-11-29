@@ -97,7 +97,7 @@ pinMode(relay2Pin, OUTPUT);
 
 ## Logika
 
-### Relay
+### Relay (Subscribe)
 
 ```cpp
 if (String(topic) == relay1_topic) {
@@ -113,6 +113,13 @@ if (String(topic) == relay1_topic) {
         digitalWrite(relay2Pin, LOW);  // Relay OFF
     }
 }
+```
+
+### Publish
+
+```cpp
+client.publish(tank_utama, msg1);
+client.publish(tank_nutrisi, msg2);
 ```
 
 # DEV2
