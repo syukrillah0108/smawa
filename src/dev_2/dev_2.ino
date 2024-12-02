@@ -86,7 +86,7 @@ void setup() {
     //Serial.begin(115200);
     pinMode(FLOW_SENSOR_PIN, INPUT_PULLUP);
     pinMode(RELAY_PIN, OUTPUT);
-    digitalWrite(RELAY_PIN, LOW);  // Ensure relay is off
+    digitalWrite(RELAY_PIN, LOW);
     pinMode(LED_BUILTIN, OUTPUT);
 
     attachInterrupt(digitalPinToInterrupt(FLOW_SENSOR_PIN), pulseCounter, FALLING);
@@ -109,40 +109,31 @@ void loop() {
     static unsigned long previousMillis = 0;
     unsigned long currentMillis = millis();
 
-    if (currentMillis - previousMillis >= 1000) {  // 1-second interval
+    if (currentMillis - previousMillis >= 1000) { 
         previousMillis = currentMillis;
 
-        // Flow rate calculation
-        flowRate = (pulseCount / 7.5); // Conversion factor to L/min
+        flowRate = (pulseCount / 7.5);
         pulseCount = 0;
 
-        float litersThisSecond = flowRate / 60.0;  // Liters per second
+        float litersThisSecond = flowRate / 60.0;
         totalLiters += litersThisSecond;
 
-        // Publish flow rate to MQTT
         client.publish(TOPIC_PUBLISH_FLOW, String(flowRate).c_str());
-        //Serial.print("Flow rate: ");
-        //Serial.print(flowRate);
         client.publish(TOPIC_PUBLISH_TOTAL, String(totalLiters).c_str());
-        //Serial.print(" L/min, Total: ");
-        //Serial.print(totalLiters);
-        //Serial.println(" L");
         client.publish(TOPIC_PUBLISH_TARGET, String(targetLiters).c_str());
 
     }
     digitalWrite(LED_BUILTIN, HIGH);
     delay(400);
     if (totalLiters >= targetLiters && targetLiters > 0) {
-        digitalWrite(RELAY_PIN, LOW);  // Turn off relay
-        //Serial.println("Target reached, relay off.");
+        digitalWrite(RELAY_PIN, LOW);
         client.publish(TOPIC_PUBLISH_STATUS, "1");
         if(NOTIF){
             client.publish(TOPIC_PUBLISH_FINISH, "Penyiraman Selesai");
             NOTIF = false;
         }
     } else if (targetLiters > 0) {
-        digitalWrite(RELAY_PIN, HIGH);  // Turn on relay
-        //Serial.println("Relay on, target not reached.");
+        digitalWrite(RELAY_PIN, HIGH);
         client.publish(TOPIC_PUBLISH_STATUS, "0");
     }
     digitalWrite(LED_BUILTIN, LOW);
