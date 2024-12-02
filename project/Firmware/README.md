@@ -28,7 +28,8 @@
   Kode bahasasa C++ yang memberikan indikator Blink LED sebagai penanda Sistem siap di gunakan
 * Monitoring Topic MQTT
   Monitoring beberapa Topic MQTT sebagai indikasi Client MQTT apakah dalam keadaan Online (terhubung) atau Offline (terputus)
-  
+* Monitoring Sistem
+
   [![Kode](https://img.shields.io/badge/kode-program-blue)](https://github.com/syukrillah0108/smawa/blob/main/src/program/monitoring.cpp)
 
 ## Konfigurasi
@@ -91,7 +92,7 @@ const int relay2Pin = D2; #Relay Tekanan Air
 * WiFi
 * MQTT Client
 * Pin Ultrasonic
-  
+
   Pin1: Air Utama
   Pin2: Air Nutrisi
 
