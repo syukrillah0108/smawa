@@ -1,8 +1,16 @@
-# Sketch
+# SBC dan AP
+![Bananapi](dev0.png)
+![Bananapi](foto_dev0.jpg)
 
-![1](1.jpg)
-![2](2.jpg)
+# Dev1
+![Dev1](dev1.jpg)
+![Dev1](foto_dev1.jpg)
+![Dev1](foto_dev1.1.jpg)
 
-# Percobaan esp32
+# Dev2
+![Dev2](dev2.jpg)
+![Dev2](foto_dev2.jpg)
+![Dev2](foto_dev2.1.jpg)
 
-![esp32](1_bb.png)
+# Instalasi
+![Instalasi](Air.png)
