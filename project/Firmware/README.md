@@ -20,12 +20,16 @@
 * Node-red
   Kebutuhan Sofware berbasis website
 
+[![Instalasi](https://img.shields.io/badge/Setup-SBC-blue)](https://github.com/syukrillah0108/smawa/blob/main/project/Firmware/instalasi.md)
+
 ## Kode
 
 * Blink LED
   Kode bahasasa C++ yang memberikan indikator Blink LED sebagai penanda Sistem siap di gunakan
 * Monitoring Topic MQTT
   Monitoring beberapa Topic MQTT sebagai indikasi Client MQTT apakah dalam keadaan Online (terhubung) atau Offline (terputus)
+  
+  [![Kode](https://img.shields.io/badge/kode-program-blue)](https://github.com/syukrillah0108/smawa/blob/main/src/program/monitoring.cpp)
 
 ## Konfigurasi
 
